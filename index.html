@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tham Gia Nhóm Giao Lưu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Quicksand', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            color: #333;
+        }
+        
+        /* Hiệu ứng nền */
+        .bg-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .bg-animation span {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 15s linear infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) scale(0);
+            }
+            100% {
+                transform: translateY(-100px) scale(1);
+            }
+        }
+        
+        /* Hiệu ứng loading */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s, visibility 0.8s;
+        }
+        
+        .loader-content {
+            text-align: center;
+        }
+        
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1.2s ease-in-out infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .loader-content p {
+            color: white;
+            font-size: 22px;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+        
+        /* Container chính */
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            transform: scale(0.9);
+            opacity: 0;
+            animation: fadeIn 0.8s forwards;
+            backdrop-filter: blur(10px);
+            transition: transform 0.5s;
+        }
+        
+        .container:hover {
+            transform: scale(0.95);
+        }
+        
+        @keyframes fadeIn {
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .logo {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 20px;
+            border: 5px solid #6e8efb;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            transition: all 0.5s ease;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(92, 107, 192, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(92, 107, 192, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(92, 107, 192, 0);
+            }
+        }
+        
+        .logo:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+        
+        h1 {
+            color: #5c6bc0;
+            margin-bottom: 20px;
+            font-size: 32px;
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        p {
+            font-size: 18px;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .button {
+            background: linear-gradient(to right, #5c6bc0, #8e24aa);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(92, 107, 192, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+            transform: translateX(-100%);
+            transition: transform 0.4s ease;
+        }
+        
+        .button:hover:before {
+            transform: translateX(100%);
+        }
+        
+        .button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(92, 107, 192, 0.6);
+        }
+        
+        .button:active {
+            transform: translateY(0) scale(1);
+            box-shadow: 0 3px 10px rgba(92, 107, 192, 0.4);
+        }
+        
+        .button i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        
+        .group-info {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            display: none;
+            animation: slideUp 0.8s forwards;
+        }
+        
+        .group-image {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 15px;
+            margin: 15px 0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            transition: transform 0.5s;
+        }
+        
+        .group-image:hover {
+            transform: scale(1.03);
+        }
+        
+        .group-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #5c6bc0;
+            margin-top: 15px;
+        }
+        
+        .group-description {
+            font-size: 16px;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        /* Hiệu ứng xuất hiện */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-slide-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideUp 0.8s forwards;
+        }
+        
+        /* Hiệu ứng chuyển trang */
+        .page-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            z-index: 9998;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s, visibility 0.6s;
+        }
+        
+        .page-transition.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Responsive */
+        @media (max-width: 500px) {
+            .container {
+                padding: 25px;
+            }
+            
+            .button {
+                padding: 14px 28px;
+                font-size: 16px;
+            }
+            
+            .logo {
+                width: 150px;
+                height: 150px;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            p {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hiệu ứng nền -->
+    <div class="bg-animation" id="bg-animation"></div>
+    
+    <!-- Hiệu ứng chuyển trang -->
+    <div class="page-transition" id="pageTransition"></div>
+    
+    <!-- Loading screen -->
+    <div id="loader">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <p>Đang tải trang...</p>
+        </div>
+    </div>
+    
+    <!-- Nội dung chính -->
+    <div class="container">
+        <img src="https://ava-grp-talk.zadn.vn/d/e/8/f/28/360/9200b3ce08e03a9efef7b4bc6d5ba5d6.jpg" alt="Logo nhóm" class="logo">
+        
+        <h1 class="animate-slide-up"></h1>
+        <p class="animate-slide-up">Bạn đã vào nhóm giao lưu chưaa??</p>
+        
+        <div class="button-container">
+            <button class="button animate-slide-up" id="notYetBtn">
+                <i class="fas fa-sign-in-alt"></i> Chưa
+            </button>
+            <button class="button animate-slide-up" id="knowBtn">
+                <i class="fas fa-check-circle"></i> Rồi
+            </button>
+        </div>
+        
+        <div class="group-info" id="groupInfo">
+            <h2>Thông tin nhóm</h2>
+            <img src="https://ava-grp-talk.zadn.vn/d/e/8/f/28/360/9200b3ce08e03a9efef7b4bc6d5ba5d6.jpg" alt="Ảnh nhóm giao lưu" class="group-image">
+            <div class="group-name">Nhóm Giao Lưu V2</div>
+            <p class="group-description">🔥 LUẬT NHÓM 🔥
+1. Cấm chat 18+ với bot!
+2. Cấm mấy thằng vô phá, không được mời Khôi và Trường.
+3. Nếu như mời 2 bọn nó kick luôn 3 thằng.
+4. Cấm spam.
+5. Đổi avatar xàm kick 1 ngày, đổi avatar 18+ kick vĩnh viễn.
+6. Cấm thành viên lấy link nhóm khác gửi vào nhóm.
+7. Không được vào nhóm "giao lưu v1", phát hiện kick vĩnh viễn, nếu out thì được phép vào lại.
+8. Cấm anh em nào lấy link UGPhone hoặc script bên giao lưu v1 hoặc link thằng trĩ với Turbo vào nhóm.
+9. Không được nói nặng nề key vàng và key bạc.
+10. Cấm anh em nào lấy STICKER của người khác khi người ta chưa đồng ý.
+11. Không được quyền gửi danh thiếp của người khác vào nhóm khác khi không xin phép.
+
+🔥 HÌNH THỨC XỬ PHẠT:
+
+Nhắc lần 1: Cấm chat (1 ngày)
+
+Nhắc lần 2: Cấm chat (5 ngày)
+
+Nhắc lần 3: Kick vĩnh viễn
+
+📌 LUẬT DÀNH CHO KEY BẠC (QUẢN TRỊ VIÊN):
+1. Key bạc không quyền đổi avatar khi chưa xin phép.
+2. Không được quyền kick bậy nếu thành viên không war. Được quyền kick khi thành viên phản hoặc war nhau thì nhắc nhở.
+3. Không được quyền chửi người khác khi họ chưa làm gì.</p>
+        </div>
+    </div>
+
+    <script>
+        // Tạo hiệu ứng nền
+        function createBgAnimation() {
+            const bgAnimation = document.getElementById('bg-animation');
+            const colors = ['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.15)', 'rgba(255,255,255,0.2)'];
+            
+            for (let i = 0; i < 30; i++) {
+                const span = document.createElement('span');
+                const size = Math.random() * 30 + 10;
+                span.style.width = size + 'px';
+                span.style.height = size + 'px';
+                span.style.background = colors[Math.floor(Math.random() * colors.length)];
+                span.style.top = Math.random() * 100 + 'vh';
+                span.style.left = Math.random() * 100 + 'vw';
+                span.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                span.style.animationDelay = (Math.random() * 5) + 's';
+                bgAnimation.appendChild(span);
+            }
+        }
+        
+        // Ẩn loader và hiện nội dung
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loader').style.opacity = '0';
+                document.getElementById('loader').style.visibility = 'hidden';
+                
+                // Hiển thị các phần tử với hiệu ứng
+                const animatedElements = document.querySelectorAll('.animate-slide-up');
+                animatedElements.forEach((element, index) => {
+                    element.style.animationDelay = (index * 0.2) + 's';
+                });
+            }, 2000); // Giả lập thời gian tải 2 giây
+        });
+        
+        // Hàm chuyển hướng với hiệu ứng
+        function redirectWithTransition(url, button) {
+            // Hiệu ứng loading trên nút
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang chuyển hướng...';
+            button.disabled = true;
+            
+            // Hiệu ứng chuyển trang
+            const pageTransition = document.getElementById('pageTransition');
+            pageTransition.classList.add('active');
+            
+            // Chuyển hướng sau khi hiệu ứng hoàn thành
+            setTimeout(function() {
+                window.location.href = url;
+            }, 1000);
+        }
+        
+        // Xử lý sự kiện nút
+        document.getElementById('notYetBtn').addEventListener('click', function() {
+            redirectWithTransition('https://zalo.me/g/vqawvh277', this);
+        });
+        
+        document.getElementById('knowBtn').addEventListener('click', function() {
+            redirectWithTransition('https://tuanfl211.github.io/roblox/', this);
+        });
+        
+        // Khởi tạo hiệu ứng nền
+        createBgAnimation();
+    </script>
+</body>
+</html>
